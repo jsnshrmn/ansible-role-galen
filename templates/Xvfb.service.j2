@@ -1,0 +1,11 @@
+[Unit]
+Description=X virtual framebuffer service
+
+[Service]
+WorkingDirectory=/home/{{ galen_user  }}
+ExecStart=Xvfb :0
+User={{ galen_user  }}
+
+[Install]
+WantedBy=multi-user.target
+Alias=Xvfb.service

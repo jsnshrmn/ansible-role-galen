@@ -1,0 +1,6 @@
+---
+# defaults file for jsnshrmn.galen
+
+galen_nvm_version: v0.33.11
+galen_user: galen
+galen_nvm_node_version: v10.8.0

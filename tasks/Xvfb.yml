@@ -1,0 +1,25 @@
+---
+
+- name: Set Xvfb environment variables.
+  copy:
+    src: Xvfb-env.sh
+    dest: /etc/profile.d/galen-Xvfb-env.sh
+
+- name: Install Xvfb service
+  template:
+    src: Xvfb.service.j2
+    dest: /lib/systemd/system/Xvfb.service
+    mode: 0644
+    owner: root
+    group: root
+
+- name: reload systemd
+  command: systemctl daemon-reload
+  become: true
+
+- name: restart Xvfb.service
+  service:
+    name: Xvfb
+    state: restarted
+    enabled: yes
+    become: true

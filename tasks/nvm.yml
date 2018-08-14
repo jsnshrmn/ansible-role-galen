@@ -1,0 +1,43 @@
+---
+
+- name: Install nvm
+  git:
+    repo: https://github.com/creationix/nvm.git
+    dest: "~/.nvm"
+    version: "{{ galen_nvm_version }}"
+
+- name: Source nvm in ~/.bash_profile
+  lineinfile:
+    dest: ~/.bash_profile
+    line: source ~/.nvm/nvm.sh
+    create: yes
+
+- name: Install node {{ galen_nvm_node_version }}
+  shell: . ~/.nvm/nvm.sh && nvm install {{ galen_nvm_node_version }}
+  args:
+    chdir: "/home/{{ galen_user }}"
+  register: galen_nvm_install_result
+
+- name: Check if {{ galen_nvm_node_version }} is the default node version
+  shell: ~/.nvm/./nvm.sh && nvm ls | grep -e 'default -> {{ galen_nvm_node_version }}'
+  args:
+    chdir: "/home/{{ galen_user }}"
+  register: galen_nvm_check_default
+  changed_when: False
+  ignore_errors: True
+
+- name: Set default node version to {{ galen_nvm_node_version }}
+  shell: ~/.nvm/./nvm.sh && nvm alias default {{ galen_nvm_node_version }}
+  args:
+    chdir: "/home/{{ galen_user }}"
+  when: galen_nvm_check_default|failed
+
+- name: Install Galen.
+  shell: . ~/.nvm/nvm.sh && npm install -g galenframework-cli
+  args:
+    chdir: "/home/{{ galen_user }}"
+
+- name: Configure Galen.
+  shell: . ~/.nvm/nvm.sh && galen config --global
+  args:
+    chdir: "/home/{{ galen_user }}"
